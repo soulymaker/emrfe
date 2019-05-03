@@ -53,6 +53,7 @@ export default {
   deleteTest(data) {return ajax('deleteTest', 'post', data)},
   updateTest(data) {return ajax('updateTest', 'post', data)},
 
+  queryTestRecord (data) {return ajax('queryTestRecord', 'post', data)},
   deleteTestRecord(data) {return ajax('deleteTestRecord', 'post', data)},
   addTestRecord (data) {return ajax('addTestRecord', 'post', data)},
   updateTestRecord(data) {return ajax('updateTestRecord', 'post', data)},
@@ -85,13 +86,12 @@ function ajax (url, method, data) {
       // API正常返回(status=20x), 是否错误通过有无error判断
       if (res.data.err !== null) {
         // 若后端返回为登录，则为session失效，应退出当前登录用户
-        Vue.prototype.$error(res.data.msg);
+        Vue.prototype.$error(res.data.err);
         reject(res);
         if (res.data.err.startsWith('Access Denied')) {
           router.push({name: 'login'})
         }
       } else {
-        // Vue.prototype.$success(res.data.msg)
         resolve(res)
       }
     }, res => {

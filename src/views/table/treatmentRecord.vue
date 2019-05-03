@@ -195,7 +195,7 @@
       },
       delete(data) {
         api.deleteTreatmentRecord(data).then(res => {
-          if (res.data.err != null) {
+          if (res.data.err === null) {
             this.$success('删除成功');
             this.getlist()
           } else {

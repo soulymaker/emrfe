@@ -37,9 +37,6 @@
           <FormItem label="用户名" prop="userId">
             <Input placeholder="用户名" style="width:200px" v-model="form.userId"/>
           </FormItem>
-          <FormItem label="密码" prop="password">
-            <Input placeholder="密码" style="width:200px" v-model="form.password"/>
-          </FormItem>
           <FormItem label="角色" prop="userType">
             <Select style="width:200px" v-model="form.userType">
               <Option :key="item.value" :value="item.value" v-for="item in options">{{ item.label }}</Option>
@@ -82,20 +79,16 @@
             key: 'userType',
             sortable: true,
             render: (h, params) => {
-              let t = params.row.userType
-              let color = 'blue'
+              let t = params.row.userType;
+              let color = '';
               if (t === '管理员') {
                 color = 'green'
-                t = '管理员'
               } else if (t === '医生') {
                 color = 'blue'
-                t = '医生'
               } else if (t === '护士') {
                 color = 'volcano'
-                t = '护士'
               } else {
                 color = 'pink'
-                t = '患者'
               }
               return h('Tag', {
                 props: {
@@ -210,7 +203,7 @@
       },
       delete(data) {
         api.deleteUser(data).then(res => {
-          if (res.data.err != null) {
+          if (res.data.err === null) {
             this.$success('删除成功');
             this.getlist()
           } else {

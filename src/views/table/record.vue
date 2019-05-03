@@ -32,7 +32,7 @@
           <FormItem label="就诊日期" prop="consultationDate">
             <DatePicker :options="disableOldDay"
                         @on-change="gettime"
-                        format="yyyy-MM-dd HH:mm:ss"
+                        format="yyyy-MM-dd"
                         placeholder="就诊日期"
                         show-week-numbers
                         style="width: 200px"
@@ -40,7 +40,7 @@
                         v-model="form.consultationDate"></DatePicker>
           </FormItem>
           <FormItem label="检查" prop="test"><Input placeholder="" style="width:200px" v-model="form.test"/></FormItem>
-          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px" v-model="form.treatment"/>
+          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px" v-model="form.diseaseType"/>
           </FormItem>
         </Form>
       </Row>
@@ -69,7 +69,7 @@
                         v-model="form.consultationDate"></DatePicker>
           </FormItem>
           <FormItem label="检查" prop="test"><Input placeholder="" style="width:200px" v-model="form.test"/></FormItem>
-          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px" v-model="form.treatment"/>
+          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px" v-model="form.diseaseType"/>
           </FormItem>
         </Form>
       </Row>
@@ -216,7 +216,7 @@
       delete(data) {
 
         api.deleteRecord(data).then(res => {
-          if (res.data.err != null) {
+          if (res.data.err === null) {
             this.$success('删除成功');
             this.getlist()
           } else {

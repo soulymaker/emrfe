@@ -16,7 +16,7 @@
     </Row>
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="addhospitalmodal">
       <Row>
-        <Form :label-width="100" ref="updateHospitalForm" v-model="form">
+        <Form :label-width="100" ref="add" v-model="form">
           <FormItem label="医院名称" prop="hospitalName">
             <Input placeholder="" style="width:200px" v-model="form.hospitalName"/>
           </FormItem>
@@ -37,21 +37,23 @@
     </Modal>
     <Modal @on-cancel="addcancel()" @on-ok="update()" style="width: 500px" title="修改" v-model="updatehospitalmodal">
       <Row>
-        <FormItem label="医院名称" prop="hospitalName">
-          <Input placeholder="" style="width:200px" v-model="form.hospitalName"/>
-        </FormItem>
-        <FormItem label="医院编码" prop="code">
-          <Input placeholder="" style="width:200px" v-model="form.code"/>
-        </FormItem>
-        <FormItem label="医院等级" prop="level">
-          <Input placeholder="" style="width:200px" v-model="form.level"/>
-        </FormItem>
-        <FormItem label="医院电话" prop="telephone">
-          <Input placeholder="" style="width:200px" v-model="form.telephone"/>
-        </FormItem>
-        <FormItem label="医院地址" prop="address">
-          <Input placeholder="" style="width:200px" v-model="form.address"/>
-        </FormItem>
+        <Form :label-width="100" ref="updateHospitalForm" v-model="form">
+          <FormItem label="医院名称" prop="hospitalName">
+            <Input placeholder="" style="width:200px" v-model="form.hospitalName"/>
+          </FormItem>
+          <FormItem label="医院编码" prop="code">
+            <Input placeholder="" style="width:200px" v-model="form.code"/>
+          </FormItem>
+          <FormItem label="医院等级" prop="level">
+            <Input placeholder="" style="width:200px" v-model="form.level"/>
+          </FormItem>
+          <FormItem label="医院电话" prop="telephone">
+            <Input placeholder="" style="width:200px" v-model="form.telephone"/>
+          </FormItem>
+          <FormItem label="医院地址" prop="address">
+            <Input placeholder="" style="width:200px" v-model="form.address"/>
+          </FormItem>
+        </Form>
       </Row>
     </Modal>
     <Table :columns="TableColumns" :data="List" :loading="false"></Table>
@@ -101,10 +103,7 @@
                   on: {
                     click: () => {
                       this.updatehospitalmodal = true;
-                      this.form.id = params.row.id;
-                      this.form.hospitalname = params.row.hospitalname;
-                      this.form.nickname = params.row.nickname;
-                      this.form.role_name = params.row.role_name;
+                      this.form = params.row;
                     }
                   }
                 }, '编辑'),
@@ -189,7 +188,7 @@
       },
       delete(data) {
         api.deleteHospital(data).then(res => {
-          if (res.data.err != null) {
+          if (res.data.err === null) {
             this.$success('删除成功');
             this.getlist()
           } else {

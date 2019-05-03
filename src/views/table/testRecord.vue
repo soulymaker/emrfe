@@ -110,10 +110,7 @@
                   on: {
                     click: () => {
                       this.updatetestRecordmodal = true;
-                      this.form.id = params.row.id;
-                      this.form.testRecordname = params.row.testRecordname;
-                      this.form.nickname = params.row.nickname;
-                      this.form.role_name = params.row.role_name;
+                      this.form = params.row;
                     }
                   }
                 }, '编辑'),
@@ -181,24 +178,25 @@
       addok() {
         let data = this.form;
         api.addTestRecord(data).then(res => {
-          this.$success('添加成功');
-          this.getlist()
-        }, res => {
-          this.$success('添加失败')
+            this.$success('添加成功');
+            this.getlist()
         })
       },
       update() {
         let data = this.form;
         api.updateTestRecord(data).then(res => {
-          this.$success('修改成功');
-          this.getlist()
-        }, res => {
-          this.$error('修改失败')
+          if (res.data.err === null) {
+            this.$success('修改成功');
+            this.getlist()
+          }
+          if (res.data.err !== null) {
+            this.$error(res.data.err)
+          }
         })
       },
       delete(data) {
         api.deleteTestRecord(data).then(res => {
-          if (res.data.err != null) {
+          if (res.data.err === null) {
             this.$success('删除成功');
             this.getlist()
           } else {
@@ -217,6 +215,14 @@
         }
       },
       addclose() {
+        this.form = {
+          id: null,
+          testName: '',
+          department: '',
+          uid: '',
+          status: '',
+          lastchangedTime: ''
+        }
       },
     },
     watch: {
