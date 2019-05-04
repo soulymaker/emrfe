@@ -1,17 +1,27 @@
 <template>
   <Col>
     <Row>
-      <Col align="left" span="12">
+      <Col align="left" span="6">
         <Breadcrumb class="title">
           <BreadcrumbItem>系统设置</BreadcrumbItem>
           <BreadcrumbItem to="/staff">员工管理</BreadcrumbItem>
         </Breadcrumb>
       </Col>
-      <Col align="right" span="12" style="margin-top: 10px">
-        <Button @click="addstaffmodal = true" class="icon" size="large" type="primary">
-          <Icon type="md-add"/> &nbsp;&nbsp;
-          添加
-        </Button>
+      <Col align="right" span="18" style="margin-top: 10px">
+        <Form v-model="form">
+          <Input placeholder="工号" style="width:100px" v-model="form.jobNumber"/>
+          <Input placeholder="姓名" style="width:100px" v-model="form.staffName"/>
+          <Button @click="qt" icon="ios-search" shape="circle" size="large" type="primary">
+            查询
+          </Button>
+          <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
+            清除查询
+          </Button>
+          <Button @click="addstaffmodal = true" class="icon" size="large" type="primary">
+            <Icon type="md-add"/> &nbsp;&nbsp;
+            添加
+          </Button>
+        </Form>
       </Col>
     </Row>
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="addstaffmodal">
@@ -156,11 +166,15 @@
       },
       getlist() {
         api.queryStaff(this.query).then(res => {
-          this.loadings.table = false;
           this.List = res.data.data;
           this.limit = this.List.length;
-        }, res => {
-          this.loadings.table = false
+        })
+      },
+      qt() {
+        let t = utils.filterEmptyValue(this.form);
+        api.queryStaff(t).then(res => {
+          this.List = res.data.data;
+          this.limit = this.List.length;
         })
       },
       addok() {
@@ -192,6 +206,7 @@
         })
       },
       addcancel() {
+        this.getlist();
         this.form = {
           id: null,
           jobNumber: '',

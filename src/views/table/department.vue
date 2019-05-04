@@ -1,17 +1,29 @@
 <template>
   <Col>
     <Row>
-      <Col align="left" span="12">
+      <Col align="left" span="6">
         <Breadcrumb class="title">
           <BreadcrumbItem>系统设置</BreadcrumbItem>
           <BreadcrumbItem to="/department">科室管理</BreadcrumbItem>
         </Breadcrumb>
       </Col>
-      <Col align="right" span="12" style="margin-top: 10px">
-        <Button @click="adddepartmentmodal = true" class="icon" size="large" type="primary">
-          <Icon type="md-add"/> &nbsp;&nbsp;
-          添加
-        </Button>
+      <Col align="right" span="18" style="margin-top: 10px">
+        <Form v-model="form">
+          <Input placeholder="科室名称" style="width:100px" v-model="form.departmentName"/>
+          <Input placeholder="科室编码" style="width:100px" v-model="form.code"/>
+          <Input placeholder="所属医院" style="width:100px" v-model="form.hospitalName"/>
+          <Input placeholder="科室地址" style="width:100px" v-model="form.address"/>
+          <Button @click="qt" icon="ios-search" shape="circle" size="large" type="primary">
+            查询
+          </Button>
+          <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
+            清除查询
+          </Button>
+          <Button @click="adddepartmentmodal = true" class="icon" size="large" type="primary">
+            <Icon type="md-add"/> &nbsp;&nbsp;
+            添加
+          </Button>
+        </Form>
       </Col>
     </Row>
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="adddepartmentmodal">
@@ -176,11 +188,15 @@
       },
       getlist() {
         api.queryDepartment(this.query).then(res => {
-          this.loadings.table = false;
           this.List = res.data.data;
           this.limit = this.List.length;
-        }, res => {
-          this.loadings.table = false
+        })
+      },
+      qt() {
+        let t = utils.filterEmptyValue(this.form);
+        api.queryDepartment(t).then(res => {
+          this.List = res.data.data;
+          this.limit = this.List.length;
         })
       },
       addok() {
@@ -212,6 +228,7 @@
         })
       },
       addcancel() {
+        this.getlist();
         this.form = {
           id: null,
           departmentName: '',

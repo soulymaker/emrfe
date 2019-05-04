@@ -1,17 +1,28 @@
 <template>
   <Col>
     <Row>
-      <Col align="left" span="12">
+      <Col align="left" span="6">
         <Breadcrumb class="title">
           <BreadcrumbItem>系统设置</BreadcrumbItem>
           <BreadcrumbItem to="/record">记录管理</BreadcrumbItem>
         </Breadcrumb>
       </Col>
-      <Col align="right" span="12" style="margin-top: 10px">
-        <Button @click="addrecordmodal = true" class="icon" size="large" type="primary">
-          <Icon type="md-add"/> &nbsp;&nbsp;
-          添加
-        </Button>
+      <Col align="right" span="18" style="margin-top: 10px">
+        <Form v-model="form">
+          <Input placeholder="医师" style="width:100px" v-model="form.doctorName"/>
+          <Input placeholder="患者" style="width:100px" v-model="form.patientName"/>
+          <Input placeholder="类型" style="width:100px" v-model="form.visitType"/>
+          <Button @click="qt" icon="ios-search" shape="circle" size="large" type="primary">
+            查询
+          </Button>
+          <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
+            清除查询
+          </Button>
+          <Button @click="addrecordmodal = true" class="icon" shape="circle" size="large" type="primary">
+            <Icon type="md-add"/> &nbsp;&nbsp;
+            添加
+          </Button>
+        </Form>
       </Col>
     </Row>
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="addrecordmodal">
@@ -40,7 +51,8 @@
                         v-model="form.consultationDate"></DatePicker>
           </FormItem>
           <FormItem label="检查" prop="test"><Input placeholder="" style="width:200px" v-model="form.test"/></FormItem>
-          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px" v-model="form.diseaseType"/>
+          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px"
+                                                           v-model="form.diseaseType"/>
           </FormItem>
         </Form>
       </Row>
@@ -69,7 +81,8 @@
                         v-model="form.consultationDate"></DatePicker>
           </FormItem>
           <FormItem label="检查" prop="test"><Input placeholder="" style="width:200px" v-model="form.test"/></FormItem>
-          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px" v-model="form.diseaseType"/>
+          <FormItem label="疾病类型" prop="diseaseType"><Input placeholder="" style="width:200px"
+                                                           v-model="form.diseaseType"/>
           </FormItem>
         </Form>
       </Row>
@@ -185,11 +198,15 @@
       },
       getlist() {
         api.queryRecord(this.query).then(res => {
-          this.loadings.table = false;
           this.List = res.data.data;
           this.limit = this.List.length;
-        }, res => {
-          this.loadings.table = false
+        })
+      },
+      qt() {
+        let t = utils.filterEmptyValue(this.form);
+        api.queryRecord(t).then(res => {
+          this.List = res.data.data;
+          this.limit = this.List.length;
         })
       },
       gettime(e) {
@@ -225,6 +242,7 @@
         })
       },
       addcancel() {
+        this.getlist();
         this.form = {
           id: null,
           uid: '',

@@ -1,17 +1,29 @@
 <template>
   <Col>
     <Row>
-      <Col align="left" span="12">
+      <Col align="left" span="6">
         <Breadcrumb class="title">
           <BreadcrumbItem>系统设置</BreadcrumbItem>
           <BreadcrumbItem to="/testRecord">检查记录管理</BreadcrumbItem>
         </Breadcrumb>
       </Col>
-      <Col align="right" span="12" style="margin-top: 10px">
-        <Button @click="addtestRecordmodal = true" class="icon" size="large" type="primary">
-          <Icon type="md-add"/> &nbsp;&nbsp;
-          添加
-        </Button>
+      <Col align="right" span="18" style="margin-top: 10px">
+        <Form v-model="form">
+          <Input placeholder="检查名称" style="width:100px" v-model="form.testName"/>
+          <Input placeholder="所在科室" style="width:100px" v-model="form.department"/>
+          <Input placeholder="患者uid" style="width:100px" v-model="form.uid"/>
+          <Input placeholder="状态" style="width:100px" v-model="form.status"/>
+          <Button @click="qt" icon="ios-search" shape="circle" size="large" type="primary">
+            查询
+          </Button>
+          <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
+            清除查询
+          </Button>
+          <Button @click="addtestRecordmodal = true" class="icon" size="large" type="primary">
+            <Icon type="md-add"/> &nbsp;&nbsp;
+            添加
+          </Button>
+        </Form>
       </Col>
     </Row>
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="addtestRecordmodal">
@@ -168,18 +180,23 @@
       },
       getlist() {
         api.queryTestRecord(this.query).then(res => {
-          this.loadings.table = false;
           this.List = res.data.data;
           this.limit = this.List.length;
-        }, res => {
-          this.loadings.table = false
         })
       },
+      qt() {
+        let t = utils.filterEmptyValue(this.form);
+        api.queryTestRecord(t).then(res => {
+          this.List = res.data.data;
+          this.limit = this.List.length;
+        })
+      },
+
       addok() {
         let data = this.form;
         api.addTestRecord(data).then(res => {
-            this.$success('添加成功');
-            this.getlist()
+          this.$success('添加成功');
+          this.getlist()
         })
       },
       update() {
@@ -205,6 +222,7 @@
         })
       },
       addcancel() {
+        this.getlist();
         this.form = {
           id: null,
           testName: '',

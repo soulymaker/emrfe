@@ -1,17 +1,31 @@
 <template>
   <Col>
     <Row>
-      <Col align="left" span="12">
+      <Col align="left" span="6">
         <Breadcrumb class="title">
           <BreadcrumbItem>系统设置</BreadcrumbItem>
           <BreadcrumbItem to="/patient">患者管理</BreadcrumbItem>
         </Breadcrumb>
       </Col>
-      <Col align="right" span="12" style="margin-top: 10px">
-        <Button @click="addpatientmodal = true" class="icon" size="large" type="primary">
-          <Icon type="md-add"/> &nbsp;&nbsp;
-          添加
-        </Button>
+      <Col align="right" span="18" style="margin-top: 10px">
+        <Form v-model="form">
+          <Input placeholder="身份证号" style="width:100px" v-model="form.uid"/>
+          <Input placeholder="姓名" style="width:100px" v-model="form.patientName"/>
+          <Select style="width:100px" v-model="form.sex">
+            <Option :key="item.value" :value="item.value" v-for="item in options">{{ item.label }}</Option>
+          </Select>
+          <Input placeholder="联系电话" style="width:100px" v-model="form.phone"/>
+          <Button @click="qt" icon="ios-search" shape="circle" size="large" type="primary">
+            查询
+          </Button>
+          <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
+            清除查询
+          </Button>
+          <Button @click="addpatientmodal = true" class="icon" size="large" type="primary">
+            <Icon type="md-add"/> &nbsp;&nbsp;
+            添加
+          </Button>
+        </Form>
       </Col>
     </Row>
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="addpatientmodal">
@@ -189,11 +203,16 @@
       },
       getlist() {
         api.queryPatient(this.query).then(res => {
-          this.loadings.table = false;
           this.List = res.data.data;
           this.limit = this.List.length;
-        }, res => {
-          this.loadings.table = false
+        })
+      },
+      qt() {
+        let t = utils.filterEmptyValue(this.form);
+        console.log(t)
+        api.queryPatient(t).then(res => {
+          this.List = res.data.data;
+          this.limit = this.List.length;
         })
       },
       addok() {
@@ -228,6 +247,7 @@
         })
       },
       addcancel() {
+        this.getlist();
         this.form = {
           id: null,
           uid: '',

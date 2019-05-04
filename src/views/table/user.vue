@@ -1,17 +1,29 @@
 <template>
   <Col>
     <Row>
-      <Col align="left" span="12">
+      <Col align="left" span="6">
         <Breadcrumb class="title">
           <BreadcrumbItem>系统设置</BreadcrumbItem>
           <BreadcrumbItem to="/user">用户管理</BreadcrumbItem>
         </Breadcrumb>
       </Col>
-      <Col align="right" span="12" style="margin-top: 10px">
-        <Button @click="addusermodal = true" class="icon" size="large" type="primary">
-          <Icon type="md-add"/>
-          添加
-        </Button>
+      <Col align="right" span="18" style="margin-top: 10px">
+        <Form v-model="form">
+          <Input clearable placeholder="用户名" size="large" style="width: 100px" type="text" v-model="form.userId"/>
+          <Select size="large" style="width: 100px" v-model="form.userType">
+            <Option :key="item.value" :value="item.value" v-for="item in options">{{ item.label }}</Option>
+          </Select>
+          <Button @click="qt" icon="ios-search" shape="circle" size="large" type="primary">
+            查询
+          </Button>
+          <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
+            清除查询
+          </Button>
+          <Button @click="addusermodal = true" class="icon" shape="circle" size="large" type="primary">
+            <Icon type="md-add"/> &nbsp;&nbsp;
+            添加
+          </Button>
+        </Form>
       </Col>
     </Row>
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="addusermodal">
@@ -174,11 +186,15 @@
       },
       getlist() {
         api.queryUser(this.query).then(res => {
-          this.loadings.table = false;
           this.List = res.data.data;
           this.total = this.List.length;
-        }, res => {
-          this.loadings.table = false
+        })
+      },
+      qt() {
+        let t = utils.filterEmptyValue(this.form);
+        api.queryUser(t).then(res => {
+          this.List = res.data.data;
+          this.total = this.List.length;
         })
       },
       addok() {
@@ -212,6 +228,7 @@
         })
       },
       addcancel() {
+        this.getlist();
         this.form = {
           id: null,
           userId: '',
