@@ -1,4 +1,3 @@
-import api from '@/api/api'
 import storage from '@/util/storage'
 import {STORAGE_KEY} from '@/util/constants'
 
@@ -8,6 +7,7 @@ const state = {
 const getters = {
   user: state => state.user || {},
   isAdminRole: (state, getters) => {
+    console.log('getters.user.userType === \'管理员\''+ (getters.user.userType === '管理员'));
     return getters.user.userType === '管理员'
   },
   isDoctorRole: (state, getters) => {
@@ -18,28 +18,22 @@ const getters = {
   },
   isPatientRole: (state, getters) => {
     return getters.user.userType === '患者'
-  }
-}
-const mutations = {
-  ['SET_USER'] (state, user) {
-    state.user = user;
-    storage.set(STORAGE_KEY.AUTHED, !!user)
-  }
-}
-const actions = {
-  getProfile ({commit}) {
-    commit('SET_USER', {
-      user: {}
-    });
-    storage.clear();
-    api.getUserInfo().then(res => {
-      commit('SET_USER', res.data.user)
-    })
   },
-  clearProfile ({commit}) {
-    commit('SET_USER', {
-      user: {}
-    });
+  isNotPatientRole: (state, getters) => {
+    return getters.user.userType !== '患者'
+  },
+};
+const mutations = {
+  ['SET_USER'](state, user) {
+    state.user = user;
+    storage.set(user.userId, 'auth')
+  }
+};
+const actions = {
+  getProfile ({commit},user) {
+    commit('SET_USER', user);
+  },
+  clearProfile () {
     storage.clear()
   }
 };

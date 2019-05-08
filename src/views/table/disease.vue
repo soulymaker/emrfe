@@ -18,7 +18,7 @@
           <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
             清除查询
           </Button>
-          <Button @click="adddiseasemodal = true" class="icon" shape="circle" size="large" type="primary">
+          <Button v-if="$store.state.user.user.userType ==='管理员'" @click="adddiseasemodal = true" class="icon" shape="circle" size="large" type="primary">
             <Icon type="md-add"/> &nbsp;&nbsp;
             添加
           </Button>
@@ -98,34 +98,36 @@
             title: '操作',
             key: 'option',
             render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.updatediseasemodal = true;
-                      this.form = params.row
+              if(this.$store.state.user.user.userType==='患者'){}else {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.updatediseasemodal = true;
+                        this.form = params.row
+                      }
                     }
-                  }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  on: {
-                    click: () => {
-                      this.delete(params.row);
+                  }, '编辑'),
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    on: {
+                      click: () => {
+                        this.delete(params.row);
+                      }
                     }
-                  }
-                }, '删除')
-              ])
+                  }, '删除')
+                ])
+              }
             }
           }
         ],

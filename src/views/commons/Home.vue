@@ -10,23 +10,23 @@
                  v-model="isCollapsed">
             <Menu :class="menuitemClasses" :open-names="['1']" :theme="theme2" @on-select="handleRoute"
                   width="auto">
-              <Submenu name="1" >
+              <Submenu name="1">
                 <!--<Submenu name="1">-->
                 <template slot="title">
                   <Icon type="md-cog"/>
                   信息查看
                 </template>
-                <MenuItem name="/user" >用户管理</MenuItem>
-                <MenuItem name="/department" >科室管理</MenuItem>
-                <MenuItem name="/disease" >疾病管理</MenuItem>
-                <MenuItem name="/hospital" >医院管理</MenuItem>
-                <MenuItem name="/patient" >病人管理</MenuItem>
-                <MenuItem name="/record" >记录管理</MenuItem>
-                <MenuItem name="/staff" >员工管理</MenuItem>
-                <MenuItem name="/test" >检查方案</MenuItem>
-                <MenuItem name="/testRecord" >检查方案使用记录</MenuItem>
-                <MenuItem name="/treatment" >治疗方案</MenuItem>
-                <MenuItem name="/treatmentRecord" >治疗方案使用记录</MenuItem>
+                <MenuItem name="/user" v-if="isAdminRole">用户管理</MenuItem>
+                <MenuItem name="/department" v-if="isAdminRole">科室管理</MenuItem>
+                <MenuItem name="/disease" v-if="isAdminRole||isPatientRole">疾病管理</MenuItem>
+                <MenuItem name="/hospital" v-if="isAdminRole">医院管理</MenuItem>
+                <MenuItem name="/patient" v-if="isAdminRole||isPatientRole">病人管理</MenuItem>
+                <MenuItem name="/record" v-if="isAdminRole||isPatientRole">记录管理</MenuItem>
+                <MenuItem name="/staff" v-if="isAdminRole||isAdminRole">员工管理</MenuItem>
+                <MenuItem name="/test" v-if="isAdminRole||isDoctorRole">检查方案</MenuItem>
+                <MenuItem name="/testRecord" v-if="isAdminRole||isDoctorRole">检查方案使用记录</MenuItem>
+                <MenuItem name="/treatment" v-if="isAdminRole||isDoctorRole">治疗方案</MenuItem>
+                <MenuItem name="/treatmentRecord" v-if="isAdminRole||isDoctorRole">治疗方案使用记录</MenuItem>
               </Submenu>
             </Menu>
           </Sider>
@@ -42,13 +42,12 @@
 </template>
 <script>
   import NavHeader from '../../components/NavHeader'
-  import api from '@/api/api'
   import {mapGetters} from 'vuex'
-  import Vue from 'Vue'
+  import storage from "../../util/storage";
 
   export default {
     name: 'home',
-    data () {
+    data() {
       return {
         isCollapsed: false,
         style: {
@@ -61,23 +60,30 @@
     components: {
       NavHeader,
     },
-    // beforeRouteEnter (to, from, next) {
-    //   api.getUserInfo().then(res => {
-    //     next(vm => {
-    //       vm.$store.commit('SET_USER', res.data.user)
-    //     })
-    //   }, res => {
-    //     console.log('用户未登录');
-    //     next({name: 'login'})
-    //   })
-    // },
+    mounted(){
+      console.log('this.$store.state.user.user.userType:'+this.$store.state.user.user.userType);
+      let t = storage.get(this.$store.state.user.user.userId);
+      console.log('===>t:\n' + t);
+      if (t === null) {
+        console.log('用户未登录');
+        this.$router.push({name: 'login'});
+      } else {
+        if (this.$store.state.user.user.userType === '患者') {
+          this.$router.push({path: '/patient'})
+        } else if (this.$store.state.user.user.userType === '管理员') {
+          this.$router.push({path: '/user'})
+        } else if (this.$store.state.user.user.userType === '医生') {
+          this.$router.push({path: '/test'})
+        }
+      }
+    },
     methods: {
-      handleRoute (route) {
+      handleRoute(route) {
         this.$router.push(route)
       }
     },
     computed: {
-      ...mapGetters(['user', 'isAdminRole']),
+      ...mapGetters(['user', 'isAdminRole','isDoctorRole','isNurseRole','isPatientRole']),
       menuitemClasses: function () {
         return [
           'menu-item',

@@ -39,12 +39,13 @@
 <script>
   import api from '@/api/api'
   import {mapActions} from 'vuex'
+  import storage from '@/util/storage'
   import '@/assets/css/login_7a7fb90.css'
   import '@/assets/css/theme_c63f218.css'
 
   export default {
     name: 'Login',
-    data () {
+    data() {
       return {
         logining: false,
         loginform: {
@@ -62,23 +63,33 @@
       }
     },
     methods: {
-      ...mapActions(['getProfile']),
-      handleLogin () {
+      ...mapActions['getProfile'],
+      handleLogin() {
         this.logining = true;
-        let data={
-          userId:this.loginform.userId,
-          password:this.loginform.password
+        let data = {
+          userId: this.loginform.userId,
+          password: this.loginform.password
         };
         api.login(data).then(res => {
-          if(res.data.msg==="success"){
-            this.getProfile();
+          this.$store.dispatch('clearProfile');
+          if (res.data.msg === "success") {
+            this.$store.dispatch('getProfile', res.data.data.user);
+            storage.set(res.data.data.user.userId, res.data.data.user);
             this.$success('登录成功');
-            this.$router.push({name: 'user'})
+            if (res.data.data.user.userType === '患者') {
+              this.$router.push({path: '/patient'})
+            } else if (res.data.data.user.userType === '管理员') {
+              this.$router.push({path: '/user'})
+            } else if (res.data.data.user.userType === '医生') {
+              this.$router.push({path: '/test'})
+            }
           }
-        }, res => {
+        }).catch(res => {
+          console.log(res);
+          this.$router.push({path: '/'})
         })
       },
-      handleRoute (route) {
+      handleRoute(route) {
         this.$router.push(route)
       }
     }

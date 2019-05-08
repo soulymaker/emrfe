@@ -3,7 +3,7 @@ import axios from 'axios'
 import router from '../router/index'
 
 Vue.prototype.$http = axios;
-axios.defaults.baseURL = "http://localhost:8082/yjyemr_war_exploded/api/";
+axios.defaults.baseURL = "http://localhost:8082/emr_war_exploded/api/";
 axios.defaults.withCredentials = true;
 export default {
   //AdminController
@@ -101,4 +101,3 @@ function ajax (url, method, data) {
     })
   })
 }
-

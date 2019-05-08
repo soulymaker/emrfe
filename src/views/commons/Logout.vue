@@ -13,9 +13,8 @@
     methods: {
       ...mapActions(['clearProfile']),
       logout () {
-        api.logout()
-        this.$success('登出成功')
-        this.clearProfile()
+        this.$success('登出成功');
+        this.clearProfile();
         this.$router.push({name: 'login'})
       }
     }

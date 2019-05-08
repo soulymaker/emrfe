@@ -18,7 +18,7 @@
           <Button @click="addcancel" icon="ios-search" shape="circle" size="large" type="primary">
             清除查询
           </Button>
-          <Button @click="addrecordmodal = true" class="icon" shape="circle" size="large" type="primary">
+          <Button v-if="$store.state.user.user.userType ==='管理员'||$store.state.user.user.userType ==='医生'" @click="addrecordmodal = true" class="icon" shape="circle" size="large" type="primary">
             <Icon type="md-add"/> &nbsp;&nbsp;
             添加
           </Button>
@@ -28,10 +28,9 @@
     <Modal @on-cancel="addcancel()" @on-ok="addok()" style="width: 500px" title="添加" v-model="addrecordmodal">
       <Row>
         <Form :label-width="100" ref="recordForm" v-model="form">
-          <FormItem label="医师" prop="doctorName"><Input placeholder="" style="width:200px" v-model="form.doctorName"/>
-          </FormItem>
-          <FormItem label="患者" prop="patientName"><Input placeholder="" style="width:200px" v-model="form.patientName"/>
-          </FormItem>
+          <FormItem label="医师" prop="doctorName"><Input placeholder="" style="width:200px" v-model="form.doctorName"/></FormItem>
+          <FormItem label="患者" prop="patientName"><Input placeholder="" style="width:200px" v-model="form.patientName"/></FormItem>
+          <FormItem label="身份证号" prop="uid"><Input placeholder="" style="width:200px" v-model="form.uid"/></FormItem>
           <FormItem label="类型" prop="visitType"><Input placeholder="" style="width:200px" v-model="form.visitType"/>
           </FormItem>
           <FormItem label="结论" prop="conclusion"><Input placeholder="" style="width:200px" v-model="form.conclusion"/>
@@ -64,6 +63,7 @@
           </FormItem>
           <FormItem label="患者" prop="patientName"><Input placeholder="" style="width:200px" v-model="form.patientName"/>
           </FormItem>
+          <FormItem label="身份证号" prop="uid"><Input placeholder="" style="width:200px" v-model="form.uid"/></FormItem>
           <FormItem label="类型" prop="visitType"><Input placeholder="" style="width:200px" v-model="form.visitType"/>
           </FormItem>
           <FormItem label="结论" prop="conclusion"><Input placeholder="" style="width:200px" v-model="form.conclusion"/>
@@ -118,34 +118,37 @@
             title: '操作',
             key: 'option',
             render: (h, params) => {
-              return h('div', [
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  style: {
-                    marginRight: '5px'
-                  },
-                  on: {
-                    click: () => {
-                      this.updaterecordmodal = true;
-                      this.form = params.row;
+              if (this.$store.state.user.user.userType === '患者') {
+              } else {
+                return h('div', [
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    style: {
+                      marginRight: '5px'
+                    },
+                    on: {
+                      click: () => {
+                        this.updaterecordmodal = true;
+                        this.form = params.row;
+                      }
                     }
-                  }
-                }, '编辑'),
-                h('Button', {
-                  props: {
-                    type: 'primary',
-                    size: 'small'
-                  },
-                  on: {
-                    click: () => {
-                      this.delete(params.row);
+                  }, '编辑'),
+                  h('Button', {
+                    props: {
+                      type: 'primary',
+                      size: 'small'
+                    },
+                    on: {
+                      click: () => {
+                        this.delete(params.row);
+                      }
                     }
-                  }
-                }, '删除')
-              ])
+                  }, '删除')
+                ])
+              }
             }
           }
         ],

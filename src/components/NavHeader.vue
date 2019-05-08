@@ -1,49 +1,18 @@
 <template>
   <div id="NavHeader" style="margin: 0">
-    <Modal v-model="chModal" title="修改密码">
-      <Form style="height: 180px" ref="formPassword" :model="formPassword" :rules="rulePassword" label-position="left"
-            :label-width="200" @ok="changePassword">
-        <Col span="24">
-          <FormItem label="Old Password" prop="old_password">
-            <Input style="width: 200px" v-model="formPassword.old_password" type="password"/>
-          </FormItem>
-          <FormItem label="New Password" prop="new_password">
-            <Input style="width: 200px" v-model="formPassword.new_password" type="password"/>
-          </FormItem>
-          <FormItem label="Confirm New Password" prop="again_password">
-            <Input style="width: 200px"  v-model="formPassword.again_password" type="password"/>
-          </FormItem>
-        </Col>
-      </Form>
-    </Modal>
     <Menu theme="dark" mode="horizontal" class="oj-menu">
       <div class="logo">病历系统</div>
       <template>
         <Dropdown class="drop-menu" @on-click="handleRoute" placement="bottom" trigger="click" id="userinfobtn">
           <Button type="text" class="drop-menu-title" id="usernamebtn"
                   style="background-color:#515a6e;color: #ffffff; border-color:#515a6e;">
-            <span id="username">{{user.nickname}}</span>
+            <span id="username">{{user.userId}}</span>
             <Icon type="ivu-icon ivu-icon-ios-arrow-down"></Icon>
           </Button>
           <Dropdown-menu slot="list">
             <Dropdown-item name="/logout">登出</Dropdown-item>
           </Dropdown-menu>
         </Dropdown>
-        <Button type="text" class="chp" id="cp" @click="chModal=true">
-          <span>修改密码</span>
-        </Button>
-        <Tooltip v-if="isAdminRole" :content=this.user.userType class="identify">
-          <img src="../assets/identity/1.png"/>
-        </Tooltip>
-        <Tooltip v-if="isDoctorRole" :content=this.user.userType class="identify">
-          <img src="../assets/identity/2.png"/>
-        </Tooltip>
-        <Tooltip v-if="isNurseRole" :content=this.user.userType class="identify">
-          <img src="../assets/identity/3.png"/>
-        </Tooltip>
-        <Tooltip v-if="isPatientRole" :content=this.user.userType class="identify">
-          <img src="../assets/identity/4.png"/>
-        </Tooltip>
       </template>
     </Menu>
   </div>
@@ -92,10 +61,8 @@
       }
     },
     mounted () {
-      this.getProfile()
     },
     methods: {
-      ...mapActions(['getProfile']),
       handleRoute (route) {
         this.$router.push(route)
       },
