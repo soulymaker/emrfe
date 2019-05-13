@@ -225,7 +225,6 @@
         this.form.consultationDate = e
       },
       addok() {
-        this.gettime();
         let data = this.form;
         api.addRecord(data).then(res => {
           this.$success('添加成功');
@@ -235,7 +234,6 @@
         })
       },
       update() {
-        this.gettime();
         let data = this.form;
         api.updateRecord(data).then(res => {
           this.$success('修改成功');
