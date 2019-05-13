@@ -31,12 +31,14 @@
           <FormItem label="医师" prop="doctorName"><Input placeholder="" style="width:200px" v-model="form.doctorName"/></FormItem>
           <FormItem label="患者" prop="patientName"><Input placeholder="" style="width:200px" v-model="form.patientName"/></FormItem>
           <FormItem label="身份证号" prop="uid"><Input placeholder="" style="width:200px" v-model="form.uid"/></FormItem>
-          <FormItem label="类型" prop="visitType"><Input placeholder="" style="width:200px" v-model="form.visitType"/>
+          <FormItem label="类型" prop="visitType">
+            <Select style="width:200px" v-model="form.visitType">
+              <Option :key="item.value" :value="item.value" v-for="item in options">{{ item.label }}</Option>
+            </Select>
           </FormItem>
           <FormItem label="结论" prop="conclusion"><Input placeholder="" style="width:200px" v-model="form.conclusion"/>
           </FormItem>
-          <FormItem label="病情描述" prop="description"><Input placeholder="" style="width:200px"
-                                                           v-model="form.description"/></FormItem>
+          <FormItem label="病情描述" prop="description"><Input placeholder="" style="width:200px" v-model="form.description"/></FormItem>
           <FormItem label="治疗方案" prop="treatment"><Input placeholder="" style="width:200px" v-model="form.treatment"/>
           </FormItem>
           <FormItem label="就诊日期" prop="consultationDate">
@@ -64,12 +66,14 @@
           <FormItem label="患者" prop="patientName"><Input placeholder="" style="width:200px" v-model="form.patientName"/>
           </FormItem>
           <FormItem label="身份证号" prop="uid"><Input placeholder="" style="width:200px" v-model="form.uid"/></FormItem>
-          <FormItem label="类型" prop="visitType"><Input placeholder="" style="width:200px" v-model="form.visitType"/>
+          <FormItem label="类型" prop="visitType">
+            <Select style="width:200px" v-model="form.visitType">
+              <Option :key="item.value" :value="item.value" v-for="item in options">{{ item.label }}</Option>
+            </Select>
           </FormItem>
           <FormItem label="结论" prop="conclusion"><Input placeholder="" style="width:200px" v-model="form.conclusion"/>
           </FormItem>
-          <FormItem label="病情描述" prop="description"><Input placeholder="" style="width:200px"
-                                                           v-model="form.description"/></FormItem>
+          <FormItem label="病情描述" prop="description"><Input placeholder="" style="width:200px" v-model="form.description"/></FormItem>
           <FormItem label="治疗方案" prop="treatment"><Input placeholder="" style="width:200px" v-model="form.treatment"/>
           </FormItem>
           <FormItem label="就诊日期" prop="consultationDate">
@@ -170,6 +174,11 @@
           visitType: '',  // 转院 急诊 门诊
           lastchangedTime: ''
         },
+        options: [
+          {value: '转院', label: '转院'},
+          {value: '急诊', label: '急诊'},
+          {value: '门诊', label: '门诊'},
+        ],
         routeName: '',
         limit: 10,
         total: 0,
@@ -216,6 +225,7 @@
         this.form.consultationDate = e
       },
       addok() {
+        this.gettime();
         let data = this.form;
         api.addRecord(data).then(res => {
           this.$success('添加成功');
@@ -225,6 +235,7 @@
         })
       },
       update() {
+        this.gettime();
         let data = this.form;
         api.updateRecord(data).then(res => {
           this.$success('修改成功');
@@ -234,7 +245,6 @@
         })
       },
       delete(data) {
-
         api.deleteRecord(data).then(res => {
           if (res.data.err === null) {
             this.$success('删除成功');
